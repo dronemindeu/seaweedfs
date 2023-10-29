@@ -4,13 +4,15 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
-	"github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil"
-	"github.com/gorilla/mux"
-	"github.com/seaweedfs/seaweedfs/weed/glog"
 	"net/http"
+	"net/http/httputil"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil"
+	"github.com/gorilla/mux"
+	"github.com/seaweedfs/seaweedfs/weed/glog"
 )
 
 type mimeType string
@@ -84,6 +86,13 @@ func setCommonHeaders(w http.ResponseWriter, r *http.Request) {
 }
 
 func WriteResponse(w http.ResponseWriter, r *http.Request, statusCode int, response []byte, mType mimeType) {
+	reqDump, err := httputil.DumpRequest(r, false)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Printf("REQUEST:\n%s", string(reqDump))
+	fmt.Printf("RESPONSE:\n%s", string(response))
 	setCommonHeaders(w, r)
 	if response != nil {
 		w.Header().Set("Content-Length", strconv.Itoa(len(response)))
@@ -100,6 +109,14 @@ func WriteResponse(w http.ResponseWriter, r *http.Request, statusCode int, respo
 		}
 		w.(http.Flusher).Flush()
 	}
+
+	// respDump, err := httputil.DumpResponse(&http.Response{
+
+	// })
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+
 }
 
 // If none of the http routes match respond with MethodNotAllowed

@@ -147,7 +147,7 @@ func GetAccessLog(r *http.Request, HTTPStatusCode int, s3errCode ErrorCode) *Acc
 	if len(hostHeader) == 0 {
 		hostHeader = r.Host
 	}
-	return &AccessLog{
+	var tmp = &AccessLog{
 		HostHeader:       hostHeader,
 		RequestID:        r.Header.Get("X-Request-ID"),
 		RemoteIP:         remoteIP,
@@ -162,6 +162,8 @@ func GetAccessLog(r *http.Request, HTTPStatusCode int, s3errCode ErrorCode) *Acc
 		Operation:        getOperation(key, r),
 		ErrorCode:        errorCode,
 	}
+	fmt.Println(tmp)
+	return tmp
 }
 
 func PostLog(r *http.Request, HTTPStatusCode int, errorCode ErrorCode) {

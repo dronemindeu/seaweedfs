@@ -1,11 +1,12 @@
 package s3api
 
 import (
-	"github.com/seaweedfs/seaweedfs/weed/s3api/s3_constants"
-	stats_collect "github.com/seaweedfs/seaweedfs/weed/stats"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/seaweedfs/seaweedfs/weed/s3api/s3_constants"
+	stats_collect "github.com/seaweedfs/seaweedfs/weed/stats"
 )
 
 type StatusRecorder struct {
