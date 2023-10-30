@@ -91,8 +91,8 @@ func WriteResponse(w http.ResponseWriter, r *http.Request, statusCode int, respo
 		fmt.Println(err)
 	}
 
-	glog.Infof("REQUEST:%v", string(reqDump))
-	glog.Infof("RESPONSE:%v", string(response))
+	glog.Infof("REQUEST: %v", string(reqDump))
+	glog.Infof("RESPONSE: %v", string(response))
 	setCommonHeaders(w, r)
 	if response != nil {
 		w.Header().Set("Content-Length", strconv.Itoa(len(response)))

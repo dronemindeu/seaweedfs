@@ -166,7 +166,6 @@ func GetAccessLog(r *http.Request, HTTPStatusCode int, s3errCode ErrorCode) *Acc
 		Operation:        getOperation(key, r),
 		ErrorCode:        errorCode,
 	}
-	glog.Infof("accessLog %v", tmp)
 	return tmp
 }
 
@@ -174,11 +173,16 @@ func PostLog(r *http.Request, HTTPStatusCode int, errorCode ErrorCode) {
 	if Logger == nil {
 		return
 	}
-	if err := Logger.Post(tag, *GetAccessLog(r, HTTPStatusCode, errorCode)); err != nil {
-		glog.Errorf("Error while posting log: %v, errorCode %v, statusCode %v, address %v", err, errorCode, HTTPStatusCode, Logger.FluentHost)
+	accessLog := *GetAccessLog(r, HTTPStatusCode, errorCode)
+	glog.Infof("AccessLog %v", accessLog)
+	if err := Logger.Post(tag, accessLog); err != nil {
+		glog.Errorf("Error while posting log err: %v", err)
 	}
-	if err := Logger.Post(tag, "PostLog dummydata for fluentd"); err != nil {
-		glog.Errorf("Error while posting log: %v, errorCode %v, statusCode %v, address %v", err, errorCode, HTTPStatusCode, Logger.FluentHost)
+	mapStringData := map[string]string{
+		"foo": "bar",
+	}
+	if err := Logger.Post(tag, mapStringData); err != nil {
+		glog.Errorf("Error while posting sample data %v", err)
 	}
 }
 
@@ -187,9 +191,11 @@ func PostAccessLog(log AccessLog) {
 		return
 	}
 	if err := Logger.Post(tag, log); err != nil {
-		glog.Warningf("Error while posting log: %v, fluenthost %v", err, Logger.FluentHost)
+		glog.Errorf("PostAccessLog, Error while posting log err: %v", err)
 	}
-	if err := Logger.Post(tag, "PostAccessLog dummydata for fluentd"); err != nil {
-		glog.Warningf("Error while posting log: %v, fluenthost %v", err, Logger.FluentHost)
+	if err := Logger.Post(tag, map[string]string{
+		"foo1": "bar1",
+	}); err != nil {
+		glog.Errorf("PostAccessLog, Error while posting sample data err: %v", err)
 	}
 }
