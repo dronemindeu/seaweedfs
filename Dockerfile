@@ -5,7 +5,7 @@ COPY ./ /go/src/github.com/seaweedfs/seaweedfs
 
 RUN cd /go/src/github.com/seaweedfs/seaweedfs/weed \
   && export LDFLAGS="-X github.com/seaweedfs/seaweedfs/weed/util.COMMIT=$(git rev-parse --short HEAD)" \
-  && CGO_ENABLED=0 go install -tags "$TAGS" -ldflags "-extldflags -static ${LDFLAGS}"
+  && GOOS=linux GARCH=amd64 CGO_ENABLED=0 go install -tags "$TAGS" -ldflags "-extldflags -static ${LDFLAGS}"
 
 FROM alpine AS final
 LABEL author="Chris Lu"

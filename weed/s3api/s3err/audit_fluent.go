@@ -3,12 +3,13 @@ package s3err
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fluent/fluent-logger-golang/fluent"
-	"github.com/seaweedfs/seaweedfs/weed/glog"
-	"github.com/seaweedfs/seaweedfs/weed/s3api/s3_constants"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/fluent/fluent-logger-golang/fluent"
+	"github.com/seaweedfs/seaweedfs/weed/glog"
+	"github.com/seaweedfs/seaweedfs/weed/s3api/s3_constants"
 )
 
 type AccessLogExtend struct {
@@ -67,10 +68,12 @@ func InitAuditLog(config string) {
 	if len(fluentConfig.TagPrefix) == 0 && len(environment) > 0 {
 		fluentConfig.TagPrefix = environment
 	}
+	glog.Infof("fluentConfig readinf from %v, data %v, address %v", config, *fluentConfig, fluentConfig)
 	fluentConfig.Async = true
 	fluentConfig.AsyncResultCallback = func(data []byte, err error) {
+		fmt.Printf("data %v, error %v", string(data), err)
 		if err != nil {
-			glog.Warning("Error while posting log: ", err)
+			glog.Errorf("Error while posting log: data %s, err %s", string(data), err)
 		}
 	}
 	var err error
@@ -162,7 +165,7 @@ func GetAccessLog(r *http.Request, HTTPStatusCode int, s3errCode ErrorCode) *Acc
 		Operation:        getOperation(key, r),
 		ErrorCode:        errorCode,
 	}
-	fmt.Println(tmp)
+	glog.Infof("accessLog %v", tmp)
 	return tmp
 }
 
@@ -171,7 +174,7 @@ func PostLog(r *http.Request, HTTPStatusCode int, errorCode ErrorCode) {
 		return
 	}
 	if err := Logger.Post(tag, *GetAccessLog(r, HTTPStatusCode, errorCode)); err != nil {
-		glog.Warning("Error while posting log: ", err)
+		glog.Warningf("Error while posting log: %v", err)
 	}
 }
 
@@ -180,6 +183,6 @@ func PostAccessLog(log AccessLog) {
 		return
 	}
 	if err := Logger.Post(tag, log); err != nil {
-		glog.Warning("Error while posting log: ", err)
+		glog.Warningf("Error while posting log: %v", err)
 	}
 }
