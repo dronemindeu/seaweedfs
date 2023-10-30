@@ -73,12 +73,6 @@ func InitAuditLog(config string) {
 		if err != nil {
 			glog.Errorf("AsyncResultCallback, data: %s, err: %s", string(data), err)
 		}
-		dummyData := map[string]string{
-			"asyncKey": "asyncValue",
-		}
-		if err := Logger.Post(tag, dummyData); err != nil {
-			glog.Errorf("AsyncResultCallback, data %v, err: %v", dummyData, err)
-		}
 	}
 	var err error
 	Logger, err = fluent.New(*fluentConfig)
