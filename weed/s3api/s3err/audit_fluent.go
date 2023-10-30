@@ -71,7 +71,7 @@ func InitAuditLog(config string) {
 	if fluentConfig.Async {
 		fluentConfig.AsyncResultCallback = func(data []byte, err error) {
 			if err != nil {
-				glog.Errorf("AsyncResultCallback, data: %s, err: %s", string(data), err)
+				glog.Errorf("async callback data: %v, err: %s", string(data), err)
 			}
 		}
 	}
@@ -81,7 +81,7 @@ func InitAuditLog(config string) {
 	if err != nil {
 		glog.Errorf("fail to load fluent config: %v", err)
 	}
-	glog.Infof("FluentConfig from logger %+v", Logger.Config)
+	glog.Infof("loaded config %+v", Logger.Config)
 }
 
 func getREST(httpMetod string, resourceType string) string {
@@ -174,15 +174,8 @@ func PostLog(r *http.Request, HTTPStatusCode int, errorCode ErrorCode) {
 		return
 	}
 	accessLog := *GetAccessLog(r, HTTPStatusCode, errorCode)
-	glog.Infof("AccessLog %v", accessLog)
 	if err := Logger.Post(tag, accessLog); err != nil {
 		glog.Errorf("Error while posting log err: %v", err)
-	}
-	mapStringData := map[string]string{
-		"foo": "bar",
-	}
-	if err := Logger.Post(tag, mapStringData); err != nil {
-		glog.Errorf("Error while posting sample data %v", err)
 	}
 }
 
@@ -192,10 +185,5 @@ func PostAccessLog(log AccessLog) {
 	}
 	if err := Logger.Post(tag, log); err != nil {
 		glog.Errorf("PostAccessLog, Error while posting log err: %v", err)
-	}
-	if err := Logger.Post(tag, map[string]string{
-		"foo1": "bar1",
-	}); err != nil {
-		glog.Errorf("PostAccessLog, Error while posting sample data err: %v", err)
 	}
 }
