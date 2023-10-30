@@ -91,8 +91,8 @@ func WriteResponse(w http.ResponseWriter, r *http.Request, statusCode int, respo
 		fmt.Println(err)
 	}
 
-	fmt.Printf("REQUEST:\n%s", string(reqDump))
-	fmt.Printf("RESPONSE:\n%s", string(response))
+	glog.Infof("REQUEST:%v", string(reqDump))
+	glog.Infof("RESPONSE:%v", string(response))
 	setCommonHeaders(w, r)
 	if response != nil {
 		w.Header().Set("Content-Length", strconv.Itoa(len(response)))
@@ -109,14 +109,6 @@ func WriteResponse(w http.ResponseWriter, r *http.Request, statusCode int, respo
 		}
 		w.(http.Flusher).Flush()
 	}
-
-	// respDump, err := httputil.DumpResponse(&http.Response{
-
-	// })
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
 }
 
 // If none of the http routes match respond with MethodNotAllowed

@@ -305,7 +305,9 @@ func (s3a *S3ApiServer) DeleteMultipleObjectsHandler(w http.ResponseWriter, r *h
 					Key:     object.ObjectName,
 				})
 			}
+
 			if auditLog != nil {
+				glog.Infof("auditLog from s3api_object_handlers %+v, %v", auditLog, *auditLog)
 				auditLog.Key = entryName
 				s3err.PostAccessLog(*auditLog)
 			}

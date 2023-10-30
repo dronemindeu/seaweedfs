@@ -175,7 +175,10 @@ func PostLog(r *http.Request, HTTPStatusCode int, errorCode ErrorCode) {
 		return
 	}
 	if err := Logger.Post(tag, *GetAccessLog(r, HTTPStatusCode, errorCode)); err != nil {
-		glog.Errorf("Error while posting log: %v, errorCode %v, statusCode %v", err, errorCode, HTTPStatusCode)
+		glog.Errorf("Error while posting log: %v, errorCode %v, statusCode %v, address %v", err, errorCode, HTTPStatusCode, Logger.FluentHost)
+	}
+	if err := Logger.Post(tag, "PostLog dummydata for fluentd"); err != nil {
+		glog.Errorf("Error while posting log: %v, errorCode %v, statusCode %v, address %v", err, errorCode, HTTPStatusCode, Logger.FluentHost)
 	}
 }
 
@@ -184,6 +187,9 @@ func PostAccessLog(log AccessLog) {
 		return
 	}
 	if err := Logger.Post(tag, log); err != nil {
-		glog.Warningf("Error while posting log: %v", err)
+		glog.Warningf("Error while posting log: %v, fluenthost %v", err, Logger.FluentHost)
+	}
+	if err := Logger.Post(tag, "PostAccessLog dummydata for fluentd"); err != nil {
+		glog.Warningf("Error while posting log: %v, fluenthost %v", err, Logger.FluentHost)
 	}
 }
