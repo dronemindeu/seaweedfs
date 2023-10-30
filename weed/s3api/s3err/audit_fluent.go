@@ -60,8 +60,8 @@ func InitAuditLog(config string) {
 		glog.Errorf("fail to read fluent config %s : %v", config, readErr)
 		return
 	}
-	fluentConfig := &fluent.Config{}
-	if err := json.Unmarshal(configContent, fluentConfig); err != nil {
+	fluentConfig := fluent.Config{}
+	if err := json.Unmarshal(configContent, &fluentConfig); err != nil {
 		glog.Errorf("fail to parse fluent config %s : %v", string(configContent), err)
 		return
 	}
@@ -69,7 +69,7 @@ func InitAuditLog(config string) {
 		fluentConfig.TagPrefix = environment
 	}
 	var err error
-	Logger, err = fluent.New(*fluentConfig)
+	Logger, err = fluent.New(fluentConfig)
 	if err != nil {
 		glog.Errorf("fail to load fluent config: %v", err)
 	}
