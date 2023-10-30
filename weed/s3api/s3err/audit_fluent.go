@@ -81,6 +81,7 @@ func InitAuditLog(config string) {
 	if err != nil {
 		glog.Errorf("fail to load fluent config: %v", err)
 	}
+	glog.Infof("FluentConfig from logger %+v,host %v, port %v,netowrk %v", Logger.Config, Logger.FluentHost, Logger.FluentPort, Logger.FluentNetwork)
 }
 
 func getREST(httpMetod string, resourceType string) string {
@@ -174,7 +175,7 @@ func PostLog(r *http.Request, HTTPStatusCode int, errorCode ErrorCode) {
 		return
 	}
 	if err := Logger.Post(tag, *GetAccessLog(r, HTTPStatusCode, errorCode)); err != nil {
-		glog.Warningf("Error while posting log: %v", err)
+		glog.Errorf("Error while posting log: %v, errorCode %v, statusCode %v", err, errorCode, HTTPStatusCode)
 	}
 }
 
