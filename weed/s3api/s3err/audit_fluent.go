@@ -68,12 +68,16 @@ func InitAuditLog(config string) {
 	if len(fluentConfig.TagPrefix) == 0 && len(environment) > 0 {
 		fluentConfig.TagPrefix = environment
 	}
-	glog.Infof("fluentConfig readinf from %v, data %v, address %v", config, *fluentConfig, fluentConfig)
 	fluentConfig.Async = true
 	fluentConfig.AsyncResultCallback = func(data []byte, err error) {
-		fmt.Printf("data %v, error %v", string(data), err)
 		if err != nil {
-			glog.Errorf("Error while posting log: data %s, err %s", string(data), err)
+			glog.Errorf("AsyncResultCallback, data: %s, err: %s", string(data), err)
+		}
+		dummyData := map[string]string{
+			"asyncKey": "asyncValue",
+		}
+		if err := Logger.Post(tag, dummyData); err != nil {
+			glog.Errorf("AsyncResultCallback, data %v, err: %v", dummyData, err)
 		}
 	}
 	var err error
@@ -81,7 +85,7 @@ func InitAuditLog(config string) {
 	if err != nil {
 		glog.Errorf("fail to load fluent config: %v", err)
 	}
-	glog.Infof("FluentConfig from logger %+v,host %v, port %v,netowrk %v", Logger.Config, Logger.FluentHost, Logger.FluentPort, Logger.FluentNetwork)
+	glog.Infof("FluentConfig from logger %+v", Logger.Config)
 }
 
 func getREST(httpMetod string, resourceType string) string {
